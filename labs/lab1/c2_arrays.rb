@@ -10,9 +10,7 @@
 # Expected: first_and_last([1, 2, 3, 4]) => [1, 4]
 def first_and_last(arr)
   # TODO: Use array indexing with [0] and [-1]
-  res = []
-  res.append(arr[0], arr.last())
-  return res
+  [arr[0], arr[-1]]
 end
 
 # Exercise 2: Array methods

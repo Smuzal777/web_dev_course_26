@@ -32,10 +32,8 @@ end
 # Expected: check_access(15) => "access denied"
 def check_access(age)
   # TODO: Use unless statement (opposite of if)
-  unless age > 18
-    return "access denied"
-  end
-  return "access granted"
+  return "access denied" unless age > 18
+  "access granted"
 end
 
 # Exercise 4: Case statement (switch)
