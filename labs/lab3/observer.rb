@@ -8,7 +8,8 @@
 # Exercise 1: Implement a Weather Station with Observers
 # The WeatherStation is the subject, and displays are observers
 
-class WeatherStation
+# класс Метеостанции
+class WeatherStation # класс субъекта
   # TODO: Initialize with an empty array of observers
   # TODO: Add temperature, humidity, and pressure attributes
   
@@ -19,28 +20,28 @@ class WeatherStation
     @pressure = 0
   end
   
-  # TODO: Implement attach method to add an observer
+  # подписать наблюдателя
   def attach(observer)
-    nil
+    @observers << observer
   end
   
-  # TODO: Implement detach method to remove an observer
+  # отписать наблюдателя
   def detach(observer)
-    nil
+    @observers.delete(observer)
   end
   
-  # TODO: Implement notify method to call update on all observers
+  # уведомляет всех наблюдателей
   def notify
-    nil
+    @observers.each { |observer| observer.update(self) }
   end
-  
+
   def set_measurements(temperature, humidity, pressure)
     @temperature = temperature
     @humidity = humidity
     @pressure = pressure
     notify
   end
-  
+
   attr_reader :temperature, :humidity, :pressure
 end
 
@@ -49,7 +50,7 @@ class CurrentConditionsDisplay
   # Return "Current conditions: #{temperature}°C, #{humidity}% humidity"
   
   def update(weather_station)
-    nil
+    "Current conditions: #{weather_station.temperature}°C, #{weather_station.humidity}% humidity"
   end
 end
 
@@ -63,13 +64,16 @@ class StatisticsDisplay
   # Return "Avg temperature: #{average}°C"
   
   def update(weather_station)
-    nil
+    @temperatures << weather_station.temperature
+    average = @temperatures.sum / @temperatures.size.to_f
+    "Avg temperature: #{average}°C"
   end
 end
 
 # Exercise 2: Implement a Stock Market Observer
 # Stock is the subject, investors are observers
 
+# биржевый наблюдатель
 class Stock
   attr_reader :symbol, :price
   
@@ -80,26 +84,32 @@ class Stock
     @observers = []
   end
   
-  # TODO: Implement subscribe method to add observer
+  # подписка наблюдателя
   def subscribe(observer)
-    nil
+    if !@observers.include?(observer)
+      @observers << observer
+    end
   end
   
-  # TODO: Implement unsubscribe method to remove observer
+  # отписка наблюдателя
   def unsubscribe(observer)
-    nil
+    if @observers.include?(observer)
+      @observers.delete(observer)
+    end
   end
   
   def update_price(new_price)
     old_price = @price
     @price = new_price
     # TODO: Notify all observers with old_price and new_price
-    nil
+    notify_observers(old_price, new_price)
   end
   
   # TODO: Implement notify_observers method
   def notify_observers(old_price, new_price)
-    nil
+    @observers.each do |observer|
+      observer.on_price_change(self, old_price, new_price)
+    end
   end
 end
 
@@ -116,13 +126,16 @@ class Investor
   # Return the notification string
   
   def on_price_change(stock, old_price, new_price)
-    nil
+    notification = "#{stock.symbol}: #{old_price} -> #{new_price}"
+    @notifications << notification
+    notification
   end
 end
 
 # Exercise 3: Implement Event System using Ruby's Observable module
 # Note: Ruby's Observable is deprecated, so we'll implement a simple version
 
+# модуль новостное агенство
 module Observable
   # TODO: Implement this module to add observer functionality
   # Methods needed: add_observer, delete_observer, notify_observers
@@ -130,19 +143,23 @@ module Observable
   def add_observer(observer)
     @observers ||= []
     # TODO: Add observer to array if not already present
-    nil
+    unless @observers.include?(observer)
+      @observers << observer
+    end
   end
   
   def delete_observer(observer)
     @observers ||= []
     # TODO: Remove observer from array
-    nil
+    if @observers.include?(observer)
+      @observers.delete(observer)
+    end
   end
   
   def notify_observers(data = nil)
     @observers ||= []
     # TODO: Call update method on each observer with self and data
-    nil
+    @observers.each { |observer| observer.update(self, data) }
   end
 end
 
@@ -154,7 +171,7 @@ class NewsAgency
   def publish_news(news)
     @latest_news = news
     # TODO: Notify all observers with the news
-    nil
+    notify_observers(news)
   end
 end
 
@@ -171,7 +188,7 @@ class NewsSubscriber
   # news_agency is the first parameter, news is the second
   
   def update(news_agency, news)
-    nil
+    @received_news << news
   end
 end
 
